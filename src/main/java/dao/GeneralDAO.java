@@ -16,9 +16,6 @@ public abstract class GeneralDAO<T> {
 
 
 
-    abstract T add(T t) throws Exception;
-
-
     public ArrayList<T> getAll() throws Exception {
 
         ArrayList<T> listOfObjects;
@@ -61,7 +58,20 @@ public abstract class GeneralDAO<T> {
         return t;
     }
 
+    public ArrayList<T> getObjectByColumnNameAndName(String column, String name) throws Exception {
+        ArrayList<T> objects = new ArrayList<>();
 
+        try(Connection connection = getConnection();
+            PreparedStatement hotelStatement = connection.prepareStatement("SELECT * FROM " + dbName + " WHERE " + column + " = ?") ) {
+            hotelStatement.setString(1, name);
+            ResultSet result = hotelStatement.executeQuery();
+            while (result.next())
+                objects.add(createObjectFromDB(connection, result));
+        } catch (SQLException e) {
+            throw  new Exception("Cant find object with name " + name + "in DB with name " + dbName);
+        }
+        return objects;
+    }
 
 
 

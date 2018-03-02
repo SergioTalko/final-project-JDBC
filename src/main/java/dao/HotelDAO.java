@@ -2,10 +2,13 @@ package dao;
 
 
 import entity.Hotel;
+import exceptions.BadRequestException;
 
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class HotelDAO extends GeneralDAO<Hotel> {
@@ -16,9 +19,22 @@ public class HotelDAO extends GeneralDAO<Hotel> {
 
 
 
-    @Override
-    Hotel add(Hotel hotel) throws Exception {
-        return null;
+    public Hotel add(Hotel hotel) throws Exception {
+        try(Connection connection = getConnection();
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO HOTELS VALUES (?, ?, ?, ?, ?)")) {
+            if (getObjectById(connection, hotel.getId()) != null)
+                throw new BadRequestException("Hotel with id " + hotel.getId() + " already exists in DB");
+
+            statement.setLong(1, hotel.getId());
+            statement.setString(2, hotel.getName());
+            statement.setString(3, hotel.getCountry());
+            statement.setString(4, hotel.getCity());
+            statement.setString(5, hotel.getStreet());
+            statement.executeQuery();
+        } catch (SQLException e) {
+            throw  new Exception("Cant save hotel with id " + hotel.getId() + " .Please try again later");
+        }
+        return hotel;
     }
 
     @Override
