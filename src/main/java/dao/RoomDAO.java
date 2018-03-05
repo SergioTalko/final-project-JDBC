@@ -26,7 +26,7 @@ public class RoomDAO extends GeneralDAO<Room> {
         try(Connection connection = getConnection();
             PreparedStatement statement = connection.prepareStatement("INSERT INTO ROOMS VALUES (?, ?, ?, ?, ?, ?, ?)")){
 
-            if (getObjectById(connection, room.getId()) != null)
+            if (getObjectById(room.getId()) != null)
                 throw new BadRequestException("Room with id " + room.getId() + "already exists");
 
             statement.setLong(1, room.getId());
@@ -43,6 +43,28 @@ public class RoomDAO extends GeneralDAO<Room> {
         return room;
     }
 
+    public Room update(Room room) throws Exception {
+        if (room == null) throw new NullPointerException("Cant update null");
+
+        if (getObjectById(room.getId()) == null) throw new Exception("Cant find room with id " + room.getId());
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement("UPDATE ROOMS SET  DATE_FROM = ?  WHERE ID = ?")) {
+
+
+            statement.setDate(1, new java.sql.Date(room.getDateAvailableFrom().getTime()));
+            statement.setLong(2, room.getId());
+
+            statement.executeUpdate();
+
+
+        } catch (SQLException e) {
+            System.err.println("Cant update room with id " + room.getId() + " try again later.");
+            e.printStackTrace();
+        }
+        return room;
+    }
+
     @Override
     Room createObjectFromDB(Connection connection, ResultSet result) throws Exception {
         long roomId = result.getLong(1);
@@ -52,7 +74,7 @@ public class RoomDAO extends GeneralDAO<Room> {
         boolean pets = Boolean.valueOf(result.getString(5));
         Date dateFrom = new Date(result.getDate(6).getTime());
         long hotelId = result.getLong(7);
-        Room room = new Room(guests, price, breakfast, pets, dateFrom, hotelDAO.getObjectById(connection, hotelId));
+        Room room = new Room(guests, price, breakfast, pets, dateFrom, hotelDAO.getObjectById(hotelId));
         room.setId(roomId);
         return room;
     }

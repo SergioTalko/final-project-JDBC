@@ -44,10 +44,11 @@ public abstract class GeneralDAO<T> {
         }
     }
 
-    public T getObjectById(Connection connection, long id) throws Exception {
+    public T getObjectById(long id) throws Exception {
         T t = null;
 
-        try(PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + dbName + " WHERE ID = ?")) {
+        try(Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + dbName + " WHERE ID = ?")) {
             statement.setLong(1, id);
             ResultSet result = statement.executeQuery();
             while (result.next())
@@ -72,6 +73,8 @@ public abstract class GeneralDAO<T> {
         }
         return objects;
     }
+
+
 
 
 

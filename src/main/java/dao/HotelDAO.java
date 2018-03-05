@@ -22,7 +22,7 @@ public class HotelDAO extends GeneralDAO<Hotel> {
     public Hotel add(Hotel hotel) throws Exception {
         try(Connection connection = getConnection();
             PreparedStatement statement = connection.prepareStatement("INSERT INTO HOTELS VALUES (?, ?, ?, ?, ?)")) {
-            if (getObjectById(connection, hotel.getId()) != null)
+            if (getObjectById(hotel.getId()) != null)
                 throw new BadRequestException("Hotel with id " + hotel.getId() + " already exists in DB");
 
             statement.setLong(1, hotel.getId());

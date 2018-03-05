@@ -1,25 +1,26 @@
 package controller;
 
+import service.OrderService;
 
-import dao.OrderDAO;
-import dao.RoomDAO;
-import dao.UserDAO;
-import entity.User;
-import entity.Room;
-
+import java.nio.file.AccessDeniedException;
 import java.util.Date;
 
 public class OrderController {
 
-    private OrderDAO orderDAO = new OrderDAO();
-    private UserDAO userDAO = new UserDAO();
-    private RoomDAO roomDAO = new RoomDAO();
+    OrderService orderService = new OrderService();
 
-    public void bookRoom(long roomId, long userId) throws Exception {
-
+    public void bookRoom(long roomId, long userId, Date dateTo) throws Exception {
+        if (Session.getUserInSession() != null) {
+            orderService.bookRoom(roomId, userId, dateTo);
+        }
+        throw new AccessDeniedException("Please login in system");
     }
 
     public void cancelReservation(long roomId, long userId) throws Exception {
-
+        if (Session.getUserInSession() != null) {
+            orderService.cancelReservation(roomId, userId);
+        }
+        throw new AccessDeniedException("Please login in system");
     }
 }
+
