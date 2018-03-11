@@ -64,6 +64,27 @@ public class RoomDAO extends GeneralDAO<Room> {
         }
         return room;
     }
+    public Room update(Connection connection , Room room) throws Exception {
+        if (room == null) throw new NullPointerException("Cant update null");
+
+        if (getObjectById(room.getId()) == null) throw new Exception("Cant find room with id " + room.getId());
+
+        try (
+                PreparedStatement statement = connection.prepareStatement("UPDATE ROOMS SET  DATE_FROM = ?  WHERE ID = ?")) {
+
+
+            statement.setDate(1, new java.sql.Date(room.getDateAvailableFrom().getTime()));
+            statement.setLong(2, room.getId());
+
+            statement.executeUpdate();
+
+
+        } catch (SQLException e) {
+            System.err.println("Cant update room with id " + room.getId() + " try again later.");
+            e.printStackTrace();
+        }
+        return room;
+    }
 
     @Override
     Room createObjectFromDB(Connection connection, ResultSet result) throws Exception {
