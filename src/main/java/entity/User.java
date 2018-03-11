@@ -9,13 +9,13 @@ public class User {
     private String country;
     private UserType userType;
 
-    public User(String userName, String password, String country) {
+    public User(String userName, String password, String country, UserType userType) {
         long random = new Random().nextInt(1000) + 100;
         this.id = random;
         this.userName = userName;
         this.password = password;
         this.country = country;
-        this.userType = UserType.USER;
+        this.userType = userType;
     }
 
 

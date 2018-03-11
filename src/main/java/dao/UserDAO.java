@@ -65,7 +65,7 @@ public class UserDAO extends GeneralDAO<User> {
         String password = result.getString(3);
         String country = result.getString(4);
         UserType userType = UserType.valueOf(result.getString(5));
-        User user = new User(name, password, country);
+        User user = new User(name, password, country,userType);
         user.setId(userId);
         return user;
     }
