@@ -13,7 +13,7 @@ public class UserService {
     }
 
     public void login(String name, String password) throws Exception {
-        User user = userDAO.getObjectByColumnNameAndName("USER_NAME", name).get(0);
+        User user = userDAO.findUserByName(name);
 
         if (name == null || password == null) throw new NullPointerException("Input data is null");
 

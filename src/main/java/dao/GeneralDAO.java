@@ -14,12 +14,10 @@ public abstract class GeneralDAO<T> {
     private String dbName;
 
 
-
-
     public ArrayList<T> getAll() throws Exception {
 
         ArrayList<T> listOfObjects;
-        try (Connection connection = getConnection();PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + dbName + "")) {
+        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + dbName + "")) {
             ResultSet result = statement.executeQuery();
             listOfObjects = createListObjectsFromDB(connection, result);
         } catch (SQLException e) {
@@ -47,7 +45,22 @@ public abstract class GeneralDAO<T> {
     public T getObjectById(long id) throws Exception {
         T t = null;
 
-        try(Connection connection = getConnection();
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + dbName + " WHERE ID = ?")) {
+            statement.setLong(1, id);
+            ResultSet result = statement.executeQuery();
+            while (result.next())
+                t = createObjectFromDB(connection, result);
+        } catch (SQLException e) {
+            throw new Exception("Cant find object with id " + id + " in DB with name " + dbName);
+        }
+        return t;
+    }
+
+    public T getObjectById(Connection connection, long id) throws Exception {
+        T t = null;
+
+        try (
                 PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + dbName + " WHERE ID = ?")) {
             statement.setLong(1, id);
             ResultSet result = statement.executeQuery();
@@ -59,30 +72,11 @@ public abstract class GeneralDAO<T> {
         return t;
     }
 
-    public ArrayList<T> getObjectByColumnNameAndName(String column, String name) throws Exception {
-        ArrayList<T> objects = new ArrayList<>();
-
-        try(Connection connection = getConnection();
-            PreparedStatement hotelStatement = connection.prepareStatement("SELECT * FROM " + dbName + " WHERE " + column + " = ?") ) {
-            hotelStatement.setString(1, name);
-            ResultSet result = hotelStatement.executeQuery();
-            while (result.next())
-                objects.add(createObjectFromDB(connection, result));
-        } catch (SQLException e) {
-            throw  new Exception("Cant find object with name " + name + "in DB with name " + dbName);
-        }
-        return objects;
-    }
-
-
-
-
-
     abstract T createObjectFromDB(Connection connection, ResultSet result) throws Exception;
 
     abstract ArrayList<T> createListObjectsFromDB(Connection connection, ResultSet result) throws Exception;
 
-    Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL, USER, PASS);
     }
 

@@ -37,6 +37,46 @@ public class HotelDAO extends GeneralDAO<Hotel> {
         return hotel;
     }
 
+
+    public ArrayList<Hotel> findHotelsByName(String name) throws Exception {
+
+        if (name == null) throw new NullPointerException("Input data is null");
+
+        ArrayList<Hotel> hotels = new ArrayList<>();
+
+        try(Connection connection = getConnection();
+            PreparedStatement hotelStatement = connection.prepareStatement("SELECT * FROM  HOTELS WHERE HOTEL_NAME = ?") ) {
+            hotelStatement.setString(1, name);
+            ResultSet result = hotelStatement.executeQuery();
+            while (result.next())
+                hotels.add(createObjectFromDB(connection, result));
+        } catch (SQLException e) {
+            throw  new Exception("Cant find hotel with name " + name + "in DB with name HOTELS");
+        }
+        return hotels;
+
+    }
+
+
+    public ArrayList<Hotel> findHotelsByCity(String city) throws Exception {
+        if (city == null) throw new NullPointerException("Input data is null");
+
+        ArrayList<Hotel> hotels = new ArrayList<>();
+
+        try(Connection connection = getConnection();
+            PreparedStatement hotelStatement = connection.prepareStatement("SELECT * FROM  HOTELS WHERE HOTEL_CITY = ?") ) {
+            hotelStatement.setString(1, city);
+            ResultSet result = hotelStatement.executeQuery();
+            while (result.next())
+                hotels.add(createObjectFromDB(connection, result));
+        } catch (SQLException e) {
+            throw  new Exception("Cant find hotel with city " + city + "in DB with name HOTELS");
+        }
+        return hotels;
+
+
+    }
+
     @Override
     Hotel createObjectFromDB(Connection connection, ResultSet result) throws Exception {
         long id = result.getLong(1);

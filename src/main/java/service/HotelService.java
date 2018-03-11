@@ -15,7 +15,7 @@ public class HotelService {
 
         if (name == null) throw new NullPointerException("Input data is null");
 
-        return hotelDAO.getObjectByColumnNameAndName("HOTEL_NAME", name);
+        return hotelDAO.findHotelsByName(name);
 
     }
 
@@ -23,7 +23,7 @@ public class HotelService {
     public ArrayList<Hotel> findHotelsByCity(String city) throws Exception {
         if (city == null) throw new NullPointerException("Input data is null");
 
-        return hotelDAO.getObjectByColumnNameAndName("HOTEL_CITY", city);
+        return hotelDAO.findHotelsByCity(city);
 
 
     }

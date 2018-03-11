@@ -36,6 +36,28 @@ public class UserDAO extends GeneralDAO<User> {
         return user;
     }
 
+    public User findUserByName(String name) throws Exception {
+        if (name == null) throw new NullPointerException("Input data is null");
+
+        ArrayList<User> users = new ArrayList<>();
+        try (
+                Connection connection = getConnection();
+                PreparedStatement hotelStatement = connection.prepareStatement("SELECT * FROM  USERS WHERE USER_NAME = ?")) {
+
+            hotelStatement.setString(1, name);
+            ResultSet result = hotelStatement.executeQuery();
+            while (result.next())
+                users.add(createObjectFromDB(connection, result));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("Cant find object with name " + name + "in DB with name HOTELS");
+
+        }
+
+        if (users.size() != 1) throw new Exception("You have more than 1 user with same name -- " + name);
+        return users.get(0);
+    }
+
     @Override
     User createObjectFromDB(Connection connection, ResultSet result) throws Exception {
         long userId = result.getLong(1);
