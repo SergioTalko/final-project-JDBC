@@ -13,10 +13,9 @@ public class UserService {
     }
 
     public void login(String name, String password) throws Exception {
-        User user = userDAO.findUserByName(name);
 
         if (name == null || password == null) throw new NullPointerException("Input data is null");
-
+        User user = userDAO.findUserByName(name);
 
         if (user.getPassword().equals(password))
             Session.login(user);

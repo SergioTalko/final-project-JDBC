@@ -54,7 +54,8 @@ public class UserDAO extends GeneralDAO<User> {
 
         }
 
-        if (users.size() != 1) throw new Exception("You have more than 1 user with same name -- " + name);
+        if (users.size() == 0 ) throw new Exception("Cant found user with name " + name + " in DB.Please check your name");
+        if (users.size() > 1) throw new Exception("You have more than 1 user with same name -- " + name);
         return users.get(0);
     }
 
